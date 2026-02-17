@@ -1,3 +1,4 @@
+<img width="1470" height="956" alt="Screenshot 2026-02-17 at 6 40 23 AM" src="https://github.com/user-attachments/assets/cc4b0f0b-8fd9-4fb6-bb10-9c2f5b4847ad" />
 
 # Autonomous Engineering Control Plane (AECP)
 
@@ -23,7 +24,7 @@ Agents:
 
 ---
 
-# 1. Why AECP Exists
+## 1. Why AECP Exists
 
 AI agents dramatically increase engineering velocity.
 
@@ -34,11 +35,11 @@ Without governance, they also introduce:
 * Unsafe rollouts
 * Cascading production failures
 
-AECP separates **intelligence from execution authority**, enabling autonomy without sacrificing reliability or safety.
+AECP separates **intelligence from execution authority**, enabling autonomy without sacrificing reliability, safety, or auditability.
 
 ---
 
-# 2. Entire Automation Architecture (End-to-End)
+## 2. Entire Automation Architecture (End-to-End)
 
 ```
                 GitHub Issue / API / Event
@@ -68,24 +69,31 @@ AECP separates **intelligence from execution authority**, enabling autonomy with
                          Self-Healing Engine
 ```
 
+### Architectural Guarantees
+
+* Backend is the single source of truth
+* Policies are enforced deterministically
+* Execution only occurs through CI/CD
+* All actions are logged and auditable
+
 ---
 
-# 3. End-to-End Automation Flow
+## 3. End-to-End Automation Flow
 
-## Step 1 — Task Intake
+### Step 1 — Task Intake
 
 * Task enters via GitHub Issue, API, or event
-* Control Plane receives and records task
+* Control Plane records the task
 * State initialized as `RECEIVED`
 
 ---
 
-## Step 2 — Orchestration
+### Step 2 — Orchestration
 
 The Agent Orchestrator:
 
 * Classifies task (feature / bug / infra / ops)
-* Assigns appropriate agent
+* Assigns the correct agent
 * Tracks deterministic state transitions
 * Logs all actions with trace IDs
 
@@ -93,22 +101,22 @@ No execution occurs at this stage.
 
 ---
 
-## Step 3 — Agent Proposal (No Authority)
+### Step 3 — Agent Proposal (No Authority)
 
-Agent produces structured proposal:
+Agent produces a structured proposal:
 
 * Code diff
 * Risk level
 * Cost estimate (USD + tokens)
 * Deployment strategy
 * Rollback plan
-* Blast radius analysis
+* Blast-radius analysis
 
-Agent output is advisory only.
+Agent output is **advisory only**.
 
 ---
 
-## Step 4 — Policy Enforcement
+### Step 4 — Policy Enforcement
 
 Proposal is validated against policy:
 
@@ -120,25 +128,25 @@ Proposal is validated against policy:
 
 If validation fails → execution is blocked.
 
-Policy-first. Always.
+**Policy-first. Always.**
 
 ---
 
-## Step 5 — Controlled Execution
+### Step 5 — Controlled Execution
 
 If approved:
 
 * Control Plane triggers GitHub Actions
-* Canary deployment begins (e.g., 10%)
+* Canary deployment begins (e.g. 10%)
 * Health checks execute automatically
 
-Execution layer is mechanical — not intelligent.
+Execution is mechanical — not intelligent.
 
 ---
 
-## Step 6 — Monitoring & Observability
+### Step 6 — Monitoring & Observability
 
-System continuously tracks:
+The system continuously tracks:
 
 * Error rate
 * Latency
@@ -150,9 +158,7 @@ All actions are auditable.
 
 ---
 
-## Step 7 — Self-Healing
-
-If regression detected:
+### Step 7 — Self-Healing
 
 ```
 Metric Breach
@@ -169,20 +175,20 @@ Debug Agent Investigation
 ```
 
 Rollback is automatic.
-Human intervention is optional — system safety is not.
+Human intervention is optional — **system safety is not**.
 
 ---
 
-# 4. Core System Components
+## 4. Core System Components
 
-## Agent Orchestrator
+### Agent Orchestrator
 
 * Deterministic state machine
 * Agent assignment
 * Execution lifecycle tracking
 * Immutable audit logging
 
-## Policy Engine
+### Policy Engine
 
 Policy-as-code enforcement:
 
@@ -194,7 +200,7 @@ Policy-as-code enforcement:
 
 No approval → no execution.
 
-## Model Router
+### Model Router
 
 * Multi-model abstraction
 * Fallback chains
@@ -203,14 +209,14 @@ No approval → no execution.
 
 Model selection never controls deployment authority.
 
-## Execution Layer
+### Execution Layer
 
 * GitHub Actions CI/CD
 * Canary deployments
 * Health validation
 * Automatic rollback
 
-## Self-Healing Engine
+### Self-Healing Engine
 
 * Detects failure patterns
 * Triggers rollback
@@ -219,7 +225,7 @@ Model selection never controls deployment authority.
 
 ---
 
-# 5. Policy DSL Example
+## 5. Policy DSL Example
 
 ```ts
 export default {
@@ -257,11 +263,11 @@ Policies are:
 
 * Versioned
 * Reviewed
-* Enforced before execution
+* Enforced **before** execution
 
 ---
 
-# 6. CI/CD Integration (GitHub Actions)
+## 6. CI/CD Integration (GitHub Actions)
 
 ```yaml
 name: Autonomous Deployment
@@ -291,14 +297,80 @@ jobs:
       - run: ./deploy.sh --rollback
 ```
 
-Execution cannot occur without successful validation.
+Execution **cannot occur** without successful validation.
 
 ---
 
-N8N automation screenshot 
 
-# 7. Agent Opera![Uploading Screenshot 2026-02-17 at 6.34.53 AM.png…]()
-ting Contract (CLAUDE.md)
+## 7. n8n Automation Layer (Execution Integrations)
+
+AECP uses **n8n strictly as an execution and integration layer**, never as a decision-making system.
+
+Once the Control Plane approves a task, it emits an execution event that triggers predefined n8n workflows.
+
+### Visual: Approved Execution Fan-Out (n8n)
+
+<img width="2940" height="1912" alt="image" src="https://github.com/user-attachments/assets/78763b2b-b2c4-413c-980f-b584fd9a3280" />
+
+
+### What This Visual Demonstrates
+
+The workflow above shows how **approved executions are fanned out safely**:
+
+```
+Control Plane (Approved Execution)
+              ↓
+          n8n Webhook
+              ↓
+      Normalize Execution Payload
+              ↓
+ ┌──────────────┼───────────────┐
+ │              │               │
+Trigger CI/CD   Notify Slack    Write Audit Log
+(GitHub)        (Ops Visibility) (Governance)
+```
+
+### Responsibilities
+
+* Trigger GitHub Actions workflows
+* Notify operators via Slack
+* Write immutable audit records
+* Execute predefined operational workflows
+
+### Explicit Non-Responsibilities
+
+* ❌ No policy evaluation
+* ❌ No approval logic
+* ❌ No risk assessment
+* ❌ No deployment authority
+
+All execution decisions originate from the **Control Plane**.
+n8n operates purely as a **deterministic integration layer**.
+
+---
+
+## How this looks to a client (this matters)
+
+When a CTO sees:
+
+* A real n8n canvas
+* Clear labels
+* Explicit non-responsibilities
+
+They think:
+
+> “Okay — automation is downstream, governed, and safe.”
+
+Not:
+
+> “This guy wired random workflows.”
+
+That difference is **huge**.
+
+
+
+
+## 8. Agent Operating Contract (CLAUDE.md)
 
 Agents must:
 
@@ -319,7 +391,7 @@ All outputs are logged and auditable.
 
 ---
 
-# 8. Observability & Governance
+## 9. Observability & Governance
 
 Built-in guarantees:
 
@@ -339,7 +411,7 @@ The system is incomplete.
 
 ---
 
-# 9. Repository Structure
+## 10. Repository Structure
 
 ```
 apps/
@@ -363,7 +435,7 @@ No logic leakage.
 
 ---
 
-# 10. Design Principles
+## 11. Design Principles
 
 * Deterministic execution
 * Policy-first architecture
@@ -374,7 +446,7 @@ No logic leakage.
 
 ---
 
-# 11. Target Outcome
+## 12. Target Outcome
 
 A production-grade autonomous engineering platform that:
 
@@ -386,9 +458,9 @@ A production-grade autonomous engineering platform that:
 
 ---
 
-# Final Note
+## Final Note
 
-This repository represents a **reference architecture and execution model** intended for technical validation and deal confirmation.
+This repository represents a **reference architecture and execution model** intended for **technical validation and deal confirmation**.
 
 Production implementation is delivered iteratively based on client scale, compliance requirements, and infrastructure constraints.
 
