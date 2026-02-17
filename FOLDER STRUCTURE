@@ -1,12 +1,20 @@
 Autonomous-Engineering-Control-Plane-AECP/
 ├─ apps/
 │  └─ control-plane/
+│     ├─ app/
+│     │  └─ api/
+│     │      ├─ tasks/route.js
+│     ├─ orchestrator.js
 ├─ agents/
 ├─ adapters/
 ├─ policies/
+│    └─ prod.policy.js
 ├─ scripts/
-├─ .github/workflows/
+│    └─ evaluate-policy.js
+├─ .github/
+│    └─ workflows/
+│       └─ autonomous-deploy.yml
+├─ proposal.json
 ├─ CLAUDE.md
 ├─ README.md
-├─ proposal.json
 ├─ package.json
