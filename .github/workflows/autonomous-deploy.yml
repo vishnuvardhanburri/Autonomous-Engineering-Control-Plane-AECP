@@ -1,4 +1,4 @@
-name: Autonomous Deploy
+name: Autonomous Deployment
 
 on:
   repository_dispatch:
@@ -10,15 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - run: node scripts/evaluate-policy.js
-
   deploy:
     needs: validate
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🚀 Deploying canary"
-
+      - run: echo "Deploy stage would go here"
   rollback:
     if: failure()
     runs-on: ubuntu-latest
     steps:
-      - run: echo "🔁 Rolling back deployment"
+      - run: echo "Rollback stage triggered"
