@@ -295,7 +295,10 @@ Execution cannot occur without successful validation.
 
 ---
 
-# 7. Agent Operating Contract (CLAUDE.md)
+N8N automation screenshot 
+
+# 7. Agent Opera![Uploading Screenshot 2026-02-17 at 6.34.53 AM.png…]()
+ting Contract (CLAUDE.md)
 
 Agents must:
 
