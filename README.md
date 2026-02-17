@@ -1,14 +1,7 @@
-Understood.
-Below is a **final, top-notch, client-grade README.md** — clean, deliberate, senior, and credible.
-No borrowed diagrams. No noise. No fluff. This is what you keep in GitHub and share with a serious client.
-
-You can **replace your README entirely with this**.
-
----
 
 # Autonomous Engineering Control Plane (AECP)
 
-Backend-first platform for **safe, deterministic autonomous AI-driven software engineering**.
+Backend-first platform enabling **safe, deterministic autonomous AI-driven software engineering**.
 
 ---
 
@@ -18,168 +11,215 @@ Backend-first platform for **safe, deterministic autonomous AI-driven software e
 Agents propose → Control Plane validates → Execution executes
 ```
 
-Autonomy is allowed.
+Autonomy is permitted.
 Authority is controlled.
 
-Agents **never deploy**, **never merge**, and **never bypass policy**.
+Agents:
+
+* ❌ Do not deploy
+* ❌ Do not merge
+* ❌ Do not bypass policy
+* ✅ Only propose structured actions
 
 ---
 
-## 1. Why This Exists
+# 1. Why AECP Exists
 
-AI agents dramatically increase engineering velocity — but without strict governance they introduce:
+AI agents dramatically increase engineering velocity.
+
+Without governance, they also introduce:
 
 * Non-deterministic deployments
 * Silent model-cost escalation
-* Uncontrolled rollouts
+* Unsafe rollouts
 * Cascading production failures
 
-AECP exists to **separate intelligence from execution authority**, enabling autonomy **without sacrificing reliability, safety, or auditability**.
+AECP separates **intelligence from execution authority**, enabling autonomy without sacrificing reliability or safety.
 
 ---
 
-## 2. System Architecture
+# 2. Entire Automation Architecture (End-to-End)
 
 ```
-                   Observability / Slack
+                GitHub Issue / API / Event
                             │
                             ▼
                     Control Plane API
-               (Orchestrator + Governance)
+                (Orchestrator + Governance)
                             │
                             ▼
                        Policy Engine
-      -------------------------------------------------
-      │                   │                         │
-   AI Agents         Model Router                Adapters
-      │                                              │
-      └──────────────────────┬───────────────────────┘
-                             ▼
-                      Execution Layer
-                  (GitHub Actions CI/CD)
+        -------------------------------------------------
+        │                   │                         │
+     AI Agents          Model Router               Adapters
+        │                                              │
+        └──────────────────────┬───────────────────────┘
+                               ▼
+                        Execution Layer
+                   (GitHub Actions CI/CD)
+                               │
+                               ▼
+                         Runtime System
+                               │
+                               ▼
+                     Monitoring & Observability
+                               │
+                               ▼
+                         Self-Healing Engine
 ```
 
-### Architectural Guarantees
+---
 
-* Backend is the single source of truth
-* Policies are enforced deterministically
-* Execution only occurs through CI/CD
-* All actions are logged and auditable
+# 3. End-to-End Automation Flow
+
+## Step 1 — Task Intake
+
+* Task enters via GitHub Issue, API, or event
+* Control Plane receives and records task
+* State initialized as `RECEIVED`
 
 ---
 
-## 3. Core Components
+## Step 2 — Orchestration
 
-### Agent Orchestrator
+The Agent Orchestrator:
 
-* Classifies tasks (feature / bug / infra / ops)
-* Assigns appropriate AI agents
-* Enforces deterministic state transitions
-* Tracks execution lifecycle
-* Maintains immutable audit logs
+* Classifies task (feature / bug / infra / ops)
+* Assigns appropriate agent
+* Tracks deterministic state transitions
+* Logs all actions with trace IDs
+
+No execution occurs at this stage.
 
 ---
 
-### Policy Engine
+## Step 3 — Agent Proposal (No Authority)
 
-Policy-as-code enforcement layer:
+Agent produces structured proposal:
+
+* Code diff
+* Risk level
+* Cost estimate (USD + tokens)
+* Deployment strategy
+* Rollback plan
+* Blast radius analysis
+
+Agent output is advisory only.
+
+---
+
+## Step 4 — Policy Enforcement
+
+Proposal is validated against policy:
+
+* Risk threshold
+* Cost ceiling
+* Security scan requirements
+* Canary rollout rules
+* Circuit breaker constraints
+
+If validation fails → execution is blocked.
+
+Policy-first. Always.
+
+---
+
+## Step 5 — Controlled Execution
+
+If approved:
+
+* Control Plane triggers GitHub Actions
+* Canary deployment begins (e.g., 10%)
+* Health checks execute automatically
+
+Execution layer is mechanical — not intelligent.
+
+---
+
+## Step 6 — Monitoring & Observability
+
+System continuously tracks:
+
+* Error rate
+* Latency
+* Deployment health
+* Cost metrics
+* Execution trace IDs
+
+All actions are auditable.
+
+---
+
+## Step 7 — Self-Healing
+
+If regression detected:
+
+```
+Metric Breach
+     ↓
+Automatic Rollback
+     ↓
+Circuit Breaker Activated
+     ↓
+Execution Freeze
+     ↓
+Slack Notification
+     ↓
+Debug Agent Investigation
+```
+
+Rollback is automatic.
+Human intervention is optional — system safety is not.
+
+---
+
+# 4. Core System Components
+
+## Agent Orchestrator
+
+* Deterministic state machine
+* Agent assignment
+* Execution lifecycle tracking
+* Immutable audit logging
+
+## Policy Engine
+
+Policy-as-code enforcement:
 
 * Risk classification
-* Token and cost ceilings
-* Security validation requirements
-* Canary and rollout thresholds
-* Circuit breaker enforcement
+* Token and cost caps
+* Security validation
+* Canary thresholds
+* Circuit breaker triggers
 
-No policy approval → no execution.
+No approval → no execution.
 
----
-
-### Model Router
+## Model Router
 
 * Multi-model abstraction
 * Fallback chains
 * Cost-aware routing
 * Failure isolation
 
-Model choice never leaks into orchestration logic.
+Model selection never controls deployment authority.
 
----
+## Execution Layer
 
-### Execution Layer
-
-* GitHub Actions CI/CD pipelines
+* GitHub Actions CI/CD
 * Canary deployments
 * Health validation
 * Automatic rollback
 
-Execution is **mechanical**, not intelligent.
+## Self-Healing Engine
 
----
-
-### Self-Healing System
-
-* Detects regression automatically
+* Detects failure patterns
 * Triggers rollback
-* Freezes further execution
-* Notifies operators
-* Escalates to debug agents
-
-Failure is expected. Survival is designed.
+* Freezes unsafe execution
+* Escalates to debug agent
 
 ---
 
-## 4. Execution Workflow
-
-```
-Task Input
-   ↓
-Orchestrator Classifies
-   ↓
-Agent Proposal (diff only)
-   ↓
-Policy Validation
-   - risk level
-   - cost ceiling
-   - deployment rules
-   ↓
-Execution Approved
-   ↓
-CI/CD Pipeline
-   ↓
-Monitoring & Metrics
-   ↓
-Self-Healing (rollback / debug)
-```
-
----
-
-## 5. Failure & Rollback Flow
-
-```
-CI/CD Failure or Metrics Regression
-            │
-            ▼
-Control Plane Detects Breach
-            │
-            ▼
-Automatic Rollback Triggered
-            │
-            ▼
-Circuit Breaker Activated
-            │
-            ▼
-Execution Freeze + Slack Alert
-            │
-            ▼
-Debug Agent Investigation
-```
-
-Rollback is automatic.
-Human intervention is optional — **system safety is not**.
-
----
-
-## 6. Policy DSL Example
+# 5. Policy DSL Example
 
 ```ts
 export default {
@@ -217,11 +257,11 @@ Policies are:
 
 * Versioned
 * Reviewed
-* Enforced **before** execution
+* Enforced before execution
 
 ---
 
-## 7. CI/CD Integration (GitHub Actions)
+# 6. CI/CD Integration (GitHub Actions)
 
 ```yaml
 name: Autonomous Deployment
@@ -251,13 +291,13 @@ jobs:
       - run: ./deploy.sh --rollback
 ```
 
-Execution **cannot** occur without successful validation.
+Execution cannot occur without successful validation.
 
 ---
 
-## 8. Agent Operating Contract (CLAUDE.md)
+# 7. Agent Operating Contract (CLAUDE.md)
 
-Agents **must**:
+Agents must:
 
 * Propose diffs only
 * Provide risk classification
@@ -265,7 +305,7 @@ Agents **must**:
 * Provide rollback strategy
 * Provide blast-radius analysis
 
-Agents **must never**:
+Agents must never:
 
 * Deploy directly
 * Merge protected branches
@@ -276,7 +316,27 @@ All outputs are logged and auditable.
 
 ---
 
-## 9. Repository Structure
+# 8. Observability & Governance
+
+Built-in guarantees:
+
+* Execution trace IDs
+* Immutable audit logs
+* Per-task cost tracking
+* Deployment health metrics
+* Incident escalation workflow
+
+If the system cannot answer:
+
+> Who approved this?
+> Why did it deploy?
+> What did it cost?
+
+The system is incomplete.
+
+---
+
+# 9. Repository Structure
 
 ```
 apps/
@@ -294,33 +354,13 @@ CLAUDE.md
 README.md
 ```
 
-Clear ownership.
-Strict boundaries.
+Strict separation of concerns.
+Clear authority boundaries.
 No logic leakage.
 
 ---
 
-## 10. Observability & Governance
-
-Built-in by design:
-
-* Execution trace IDs
-* Immutable audit logs
-* Per-task cost tracking
-* Deployment health metrics
-* Incident escalation workflow
-
-If the system cannot answer:
-
-> Who approved this?
-> Why did it deploy?
-> What did it cost?
-
-Then it is incomplete.
-
----
-
-## 11. Design Principles
+# 10. Design Principles
 
 * Deterministic execution
 * Policy-first architecture
@@ -331,7 +371,7 @@ Then it is incomplete.
 
 ---
 
-## 12. Target Outcome
+# 11. Target Outcome
 
 A production-grade autonomous engineering platform that:
 
@@ -343,19 +383,11 @@ A production-grade autonomous engineering platform that:
 
 ---
 
-### Final note (important)
+# Final Note
 
-This repository represents a **reference architecture and execution model**, intended for **technical validation and deal confirmation**.
-Production implementation is delivered iteratively based on client constraints, scale, and compliance requirements.
+This repository represents a **reference architecture and execution model** intended for technical validation and deal confirmation.
+
+Production implementation is delivered iteratively based on client scale, compliance requirements, and infrastructure constraints.
 
 ---
 
-If you ship *this* README, you look like someone who designs **control systems**, not just AI demos.
-
-If you want:
-
-* a short **“Implementation Status”** section
-* a **client-ready explanation paragraph** for sharing this repo
-* or a **one-week delivery breakdown** aligned with this architecture
-
-say the word.
