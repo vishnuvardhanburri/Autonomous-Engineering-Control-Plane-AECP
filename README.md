@@ -1,9 +1,32 @@
 
 # Autonomous Engineering Control Plane (AECP)
 
+Backend-first platform enabling safe autonomous AI-driven software engineering through deterministic execution control.
+
+Core Principle:
+
+Agents propose → Control Plane validates → Execution executes
+
+
 > Deterministic governance layer for AI-driven software development at continuous deployment scale.
 
 ---
+
+           Observability / Slack
+                    |
+              Control Plane API
+         (Orchestrator + Governance)
+                    |
+               Policy Engine
+     ---------------------------------
+     |            |                 |
+   Agents    Model Router       Adapters
+                                      |
+                              External Systems
+                    |
+              Execution Layer
+            (GitHub Actions CI/CD)
+
 
 ## 1. Why This Exists
 
@@ -121,6 +144,26 @@ Policy-as-code enforcement layer:
 * Escalates to debug agent
 
 ---
+
+Excution workflow 
+Task Input
+   ↓
+Orchestrator Classifies
+   ↓
+Agent Proposal
+   ↓
+Policy Validation
+   - cost limit
+   - risk level
+   - deployment rules
+   ↓
+Execution Approved
+   ↓
+CI/CD Pipeline
+   ↓
+Monitoring
+   ↓
+Self-Healing (rollback/debug)
 
 ## 4. End-to-End Execution Flow
 
