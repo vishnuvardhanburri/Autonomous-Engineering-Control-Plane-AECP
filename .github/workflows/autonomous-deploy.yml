@@ -1,0 +1,24 @@
+name: Autonomous Deploy
+
+on:
+  repository_dispatch:
+    types: [aecp-approved]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: node scripts/evaluate-policy.js
+
+  deploy:
+    needs: validate
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🚀 Deploying canary"
+
+  rollback:
+    if: failure()
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "🔁 Rolling back deployment"
