@@ -1,0 +1,106 @@
+{
+  "name": "AECP Autonomous Deployment Flow",
+  "nodes": [
+    {
+      "parameters": {
+        "path": "aecp-approved",
+        "responseMode": "onReceived"
+      },
+      "id": "Webhook",
+      "name": "Approved Task Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{\n  json: {\n    taskId: $json.body.taskId,\n    risk: $json.body.risk,\n    cost: $json.body.costUsd,\n    status: \"APPROVED\"\n  }\n}];"
+      },
+      "id": "FormatData",
+      "name": "Format Task Data",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "authentication": "predefinedCredentialType",
+        "requestMethod": "POST",
+        "url": "https://api.github.com/repos/YOUR_ORG/YOUR_REPO/dispatches",
+        "jsonParameters": true,
+        "bodyParametersJson": "{\n  \"event_type\": \"aecp-approved-task\",\n  \"client_payload\": {\n    \"taskId\": \"{{$json.taskId}}\"\n  }\n}"
+      },
+      "id": "TriggerGitHub",
+      "name": "Trigger GitHub Actions",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 2,
+      "position": [700, 200]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "channel": "#engineering",
+        "text": "AECP Task {{$json.taskId}} approved. Risk: {{$json.risk}} | Cost: ${{$json.cost}}"
+      },
+      "id": "SlackNotify",
+      "name": "Notify Slack",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [700, 400]
+    },
+    {
+      "parameters": {
+        "functionCode": "return [{ json: { audit: \"Logged execution for task \" + $json.taskId, timestamp: new Date() }}];"
+      },
+      "id": "AuditLog",
+      "name": "Audit Logger",
+      "type": "n8n-nodes-base.function",
+      "typeVersion": 1,
+      "position": [950, 300]
+    }
+  ],
+  "connections": {
+    "Approved Task Webhook": {
+      "main": [
+        [
+          {
+            "node": "Format Task Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Task Data": {
+      "main": [
+        [
+          {
+            "node": "Trigger GitHub Actions",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Notify Slack",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger GitHub Actions": {
+      "main": [
+        [
+          {
+            "node": "Audit Logger",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {},
+  "versionId": "1"
+}
